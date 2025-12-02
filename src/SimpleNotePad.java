@@ -122,6 +122,8 @@ public class SimpleNotePad {
                 saveAsFile();
             }
         });
+        // 为保存操作绑定ctrl + s快捷键
+        jmi_save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
 
         // 初始化另存为监听器
         jmi_saveAs.addActionListener(e -> {
@@ -132,6 +134,7 @@ public class SimpleNotePad {
         jmi_exit.addActionListener(e -> {
             System.exit(0); // 退出应用程序
         });
+        jmi_exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
 
         // 初始化撤销监听器
         jmi_cancel.addActionListener(e -> {
@@ -140,6 +143,7 @@ public class SimpleNotePad {
         });
         // 为撤销操作绑定ctrl + z快捷键
         jmi_cancel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+
         // 处理自动换行功能
         jmi_wordwrap.addActionListener(e -> {
             jta.setLineWrap(jmi_wordwrap.isSelected());
