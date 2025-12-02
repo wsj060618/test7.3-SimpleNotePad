@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -26,7 +23,8 @@ public class SimpleNotePad {
     private JFileChooser jfc; // 文件选择器
     private File currentFile; // 当前打开的文件
     private boolean ctrlPressed = false; // 跟踪Ctrl键是否按下
-
+    private JMenuItem jmi_zoomIn; // 放大菜单项
+    private JMenuItem jmi_zoomOut; // 缩小菜单项
     //初始化窗口
     public void InitFrame() {
         // 初始化窗口
@@ -57,8 +55,13 @@ public class SimpleNotePad {
         jmb.add(jm_edit);
         jm_look = new JMenu("查看");
         jmi_wordwrap = new JCheckBoxMenuItem("自动换行");
+        jmi_zoomIn = new JMenuItem("放大");
+        jmi_zoomOut = new JMenuItem("缩小");
         jmi_wordwrap.setSelected(true); // 默认选中
         jm_look.add(jmi_wordwrap);
+        jm_look.add(jmi_zoomIn);
+        jm_look.add(jmi_zoomOut);
+        jm_look.addSeparator(); // 添加分隔线
         jmb.add(jm_look);
         jf.setJMenuBar(jmb);
 
@@ -79,7 +82,7 @@ public class SimpleNotePad {
         jmi_new.addActionListener(e -> {
             jta.setText(""); // 新建文件时清空文本域
             currentFile = null; // 清除当前文件引用
-            jf.setTitle("简易记事本"); // 重置窗口标题
+            jf.setTitle("简易记事本 - 未命名"); // 重置窗口标题
             // 提示用户新建文件成功
             JOptionPane.showMessageDialog(jf, "新建文件成功", "提示", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -119,7 +122,7 @@ public class SimpleNotePad {
                 saveAsFile();
             }
         });
-        
+
         // 初始化另存为监听器
         jmi_saveAs.addActionListener(e -> {
             saveAsFile();
@@ -142,50 +145,13 @@ public class SimpleNotePad {
             jta.setLineWrap(jmi_wordwrap.isSelected());
         });
 
-        // 添加Ctrl键按下和释放的监听
-        jta.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
-                    ctrlPressed = true;
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
-                    ctrlPressed = false;
-                }
-            }
-        });
-
-        jta.addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                // 只有在Ctrl键按下时才调整字体大小
-                if (ctrlPressed) {
-                    Font currentFont = jta.getFont();
-                    int currentSize = currentFont.getSize();
-                    String fontFamily = currentFont.getFamily();
-                    int fontStyle = currentFont.getStyle();
-
-                    // 根据滚轮方向调整字体大小
-                    int newSize = currentSize;
-                    if (e.getWheelRotation() < 0) {
-                        newSize = currentSize + 1; // 放大字体
-                    } else {
-                        newSize = Math.max(8, currentSize - 1); // 缩小字体，最小为8
-                    }
-
-                    // 应用新字体
-                    jta.setFont(new Font(fontFamily, fontStyle, newSize));
-
-                    // 阻止事件继续传播，避免同时调整字体和滚动
-                    e.consume();
-                }
-                // 当Ctrl键未按下时，不做任何处理，让滚动面板正常滚动
-            }
-        });
+        // 添加字体放大缩小功能
+        jmi_zoomIn.addActionListener(e -> zoomIn());
+        jmi_zoomOut.addActionListener(e -> zoomOut());
+        // 为字体放大操作绑定ctrl + =快捷键
+        jmi_zoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK));
+        // 为字体缩小操作绑定ctrl + -快捷键
+        jmi_zoomOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
     }
     
     // 另存为文件方法
@@ -203,6 +169,28 @@ public class SimpleNotePad {
                 JOptionPane.showMessageDialog(jf, "保存文件失败", "错误", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    // 字体放大方法
+    private void zoomIn() {
+        Font currentFont = jta.getFont();
+        int currentSize = currentFont.getSize();
+        String fontFamily = currentFont.getFamily(); // 获取当前字体的字体名称
+        int fontStyle = currentFont.getStyle();
+
+        jta.setFont(new Font(fontFamily, fontStyle, currentSize + 2)); // 每次增加2点字号
+    }
+
+    // 字体缩小方法
+    private void zoomOut() {
+        Font currentFont = jta.getFont();
+        int currentSize = currentFont.getSize();
+        String fontFamily = currentFont.getFamily(); // 获取当前字体的字体名称
+        int fontStyle = currentFont.getStyle();
+
+        // 设置最小字体为8号，避免字体过小无法阅读
+        int newSize = Math.max(8, currentSize - 2);
+        jta.setFont(new Font(fontFamily, fontStyle, newSize));
     }
 
     public SimpleNotePad() {
