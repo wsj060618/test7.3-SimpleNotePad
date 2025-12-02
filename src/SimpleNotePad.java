@@ -22,7 +22,6 @@ public class SimpleNotePad {
     private JCheckBoxMenuItem jmi_wordwrap;// 自动换行菜单项
     private JFileChooser jfc; // 文件选择器
     private File currentFile; // 当前打开的文件
-    private boolean ctrlPressed = false; // 跟踪Ctrl键是否按下
     private JMenuItem jmi_zoomIn; // 放大菜单项
     private JMenuItem jmi_zoomOut; // 缩小菜单项
     //初始化窗口
@@ -126,9 +125,7 @@ public class SimpleNotePad {
         jmi_save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
 
         // 初始化另存为监听器
-        jmi_saveAs.addActionListener(e -> {
-            saveAsFile();
-        });
+        jmi_saveAs.addActionListener(e -> saveAsFile());
 
         // 初始化退出监听器
         jmi_exit.addActionListener(e -> {
@@ -145,9 +142,7 @@ public class SimpleNotePad {
         jmi_cancel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
 
         // 处理自动换行功能
-        jmi_wordwrap.addActionListener(e -> {
-            jta.setLineWrap(jmi_wordwrap.isSelected());
-        });
+        jmi_wordwrap.addActionListener(e -> jta.setLineWrap(jmi_wordwrap.isSelected()));
 
         // 添加字体放大缩小功能
         jmi_zoomIn.addActionListener(e -> zoomIn());
