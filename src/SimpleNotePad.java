@@ -58,9 +58,9 @@ public class SimpleNotePad {
         jmi_zoomOut = new JMenuItem("缩小");
         jmi_wordwrap.setSelected(true); // 默认选中
         jm_look.add(jmi_wordwrap);
+        jm_look.addSeparator(); // 添加分隔线
         jm_look.add(jmi_zoomIn);
         jm_look.add(jmi_zoomOut);
-        jm_look.addSeparator(); // 添加分隔线
         jmb.add(jm_look);
         jf.setJMenuBar(jmb);
 
@@ -177,11 +177,12 @@ public class SimpleNotePad {
         String fontFamily = currentFont.getFamily(); // 获取当前字体的字体名称
         int fontStyle = currentFont.getStyle();
 
-        jta.setFont(new Font(fontFamily, fontStyle, currentSize + 2)); // 每次增加2点字号
+        jta.setFont(new Font(fontFamily, fontStyle, currentSize + 2)); // 每次增加2点字号7
     }
 
     // 字体缩小方法
     private void zoomOut() {
+
         Font currentFont = jta.getFont();
         int currentSize = currentFont.getSize();
         String fontFamily = currentFont.getFamily(); // 获取当前字体的字体名称
@@ -196,6 +197,7 @@ public class SimpleNotePad {
         InitFrame();
     }
     public static void main(String[] args) {
-        new SimpleNotePad();
+        // 确保 Swing 组件在事件分发线程（EDT）中创建和更新
+        SwingUtilities.invokeLater(SimpleNotePad::new);
     }
 }
